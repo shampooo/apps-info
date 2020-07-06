@@ -1,0 +1,74 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
+using System.Windows.Forms;
+;
+
+namespace .Views
+{
+
+    {
+        private int selectedIndex = 0;
+        public RadForm1()
+        {
+            InitializeComponent();
+
+            radCheckedListBox1.Items.Add("line1");
+            radCheckedListBox1.Items.Add("line2");
+            radCheckedListBox1.Items.Add("line3");
+            radCheckedListBox1.Items.Add("line4");
+            radCheckedListBox1.Items.Add("line5");
+            radCheckedListBox1.Items.Add("line6");
+            radCheckedListBox1.Items.Add("line7");
+            radCheckedListBox1.Items.Add("line8");
+            radCheckedListBox1.Items.Add("line9");
+
+            radCheckedListBox1.Items[selectedIndex].CheckState = Telerik.WinControls.Enumerations.ToggleState.On;
+            radCheckedListBox1.SelectedIndex = selectedIndex;
+            //radCheckedListBox1.SelectedItemsChanged += RadCheckedListBox1_SelectedItemsChanged;
+            //radCheckedListBox1.SelectedIndexChanged += RadCheckedListBox1_SelectedIndexChanged;
+            radCheckedListBox1.ItemCheckedChanged += RadCheckedListBox1_ItemCheckedChanged;
+
+            
+        }
+
+        private void RadCheckedListBox1_ItemCheckedChanged(object sender, Telerik.WinControls.UI.ListViewItemEventArgs e)
+        {
+            if (e.Item.CheckState == Telerik.WinControls.Enumerations.ToggleState.On)
+            {
+
+                var prev = radCheckedListBox1.Items[selectedIndex].Value;
+
+                var b = e.Item.Value;
+
+                if (prev != b)
+                {
+                    radCheckedListBox1.Items[selectedIndex].CheckState = Telerik.WinControls.Enumerations.ToggleState.Off;
+
+                    for (int i = 0; i < radCheckedListBox1.Items.Count; i++)
+                    {
+                        if (radCheckedListBox1.Items[i].Value == b)
+                        {
+                            selectedIndex = i;
+                            radCheckedListBox1.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void RadCheckedListBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("b");
+        }
+
+        private void RadCheckedListBox1_SelectedItemsChanged(object sender, EventArgs e)
+        {
+            MessageBox.Show("a");
+        }
+    }
+}
