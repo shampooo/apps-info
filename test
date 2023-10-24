@@ -1,0 +1,18 @@
+ @SuppressLint("MissingPermission")
+    public static String[] getSearchBluetoothList() {
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        Iterator<BluetoothDevice> iterator = (mBluetoothAdapter.getBondedDevices()).iterator();
+
+        List<String> list = new ArrayList<>();
+
+        while (iterator.hasNext()) {
+            BluetoothDevice pairedDevice = iterator.next();
+            int deviceNum = pairedDevice.getBluetoothClass().getMajorDeviceClass();
+
+            if (deviceNum == BT_PRINTER) {
+                list.add(pairedDevice.getName() + "||" + pairedDevice.getAddress());
+            }
+        }
+
+        return list.toArray(new String[0]);
+    }
