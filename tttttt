@@ -1,0 +1,20 @@
+def dict_to_class(module_name, class_name, data):
+    # 동적으로 클래스 로드
+    module = importlib.import_module(module_name)
+    cls = getattr(module, class_name)
+    
+    # 클래스의 필드 타입 가져오기
+    annotations = cls.__init__.__annotations__
+
+    # 인스턴스 생성에 필요한 키워드 인자 딕셔너리 생성
+    init_args = {}
+    for key, value in data.items():
+        field_type = annotations.get(key)
+        if isinstance(value, dict) and field_type is not None:
+            # 재귀적으로 딕셔너리를 클래스로 변환
+            nested_module_name, nested_class_name = field_type.__module__, field_type.__name__
+            init_args[key] = dict_to_class(nested_module_name, nested_class_name, value)
+        else:
+            init_args[key] = value
+
+    return cls(**init_args)
