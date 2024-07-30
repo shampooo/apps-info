@@ -5,10 +5,19 @@ def dict_to_ros_msg(module_name: str, class_name: str, data: dict) -> Any:
     
     # 인스턴스 생성에 필요한 키워드 인자 딕셔너리 생성
     init_args = {}
+    type_hints = get_type_hints(cls)
+    
     for key, value in data.items():
-        if isinstance(value, dict):
-            nested_module_name, nested_class_name = module_name, value['type']
-            init_args[key] = dict_to_ros_msg(nested_module_name, nested_class_name, value['data'])
+        field_type = type_hints.get(key)
+        
+        if isinstance(value, list) and hasattr(field_type, '__origin__') and field_type.__origin__ == list:
+            # 리스트의 타입을 가져오기 위해 __args__ 사용
+            nested_type = field_type.__args__[0]
+            nested_module_name, nested_class_name = nested_type.__module__, nested_type.__name__
+            init_args[key] = [dict_to_ros_msg(nested_module_name, nested_class_name, item) for item in value]
+        elif hasattr(field_type, '__annotations__'):
+            nested_module_name, nested_class_name = field_type.__module__, field_type.__name__
+            init_args[key] = dict_to_ros_msg(nested_module_name, nested_class_name, value)
         else:
             init_args[key] = value
 
